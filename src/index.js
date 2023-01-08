@@ -10,6 +10,10 @@ module.exports = function toReadable( n ) {
         return 'zero';
     }
     
+    if( parseInt( string ) === 1 ) {
+        return 'one';
+    }
+    
     /* Array of units as words */
     units = [ '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' ];
     
