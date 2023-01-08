@@ -1,21 +1,47 @@
-module.exports = function toReadable (number) {
-    const first = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
-    const tens = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
-    const mad = ['', 'thousand', 'million', 'billion', 'trillion'];
-    let word = '';
-  
-    for (let i = 0; i < mad.length; i++) {
-      let tempNumber = number%(100*Math.pow(1000,i));
-      if (Math.floor(tempNumber/Math.pow(1000,i)) !== 0) {
-        if (Math.floor(tempNumber/Math.pow(1000,i)) < 20) {
-          word = first[Math.floor(tempNumber/Math.pow(1000,i))] + mad[i] + ' ' + word;
-        } else {
-          word = tens[Math.floor(tempNumber/(10*Math.pow(1000,i)))] + '-' + first[Math.floor(tempNumber/Math.pow(1000,i))%10] + mad[i] + ' ' + word;
-        }
+  var th = ['','thousand','million', 'billion','trillion'];
+  var dg = ['zero','one','two','three','four', 'five','six','seven','eight','nine'];
+   var tn = ['ten','eleven','twelve','thirteen', 'fourteen','fifteen','sixteen', 'seventeen','eighteen','nineteen'];
+   var tw = ['twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
+   
+module.exports = function toReadable(s) {
+      s = s.toString();
+      s = s.replace(/[\, ]/g,'');
+      if (s != parseFloat(s)) return 'not a number';
+      var x = s.indexOf('.');
+      if (x == -1)
+          x = s.length;
+      if (x > 15)
+          return 'too big';
+      var n = s.split(''); 
+      var str = '';
+      var sk = 0;
+      for (var i=0;   i < x;  i++) {
+          if ((x-i)%3==2) { 
+              if (n[i] == '1') {
+                  str += tn[Number(n[i+1])] + ' ';
+                  i++;
+                  sk=1;
+              } else if (n[i]!=0) {
+                  str += tw[n[i]-2] + ' ';
+                  sk=1;
+              }
+          } else if (n[i]!=0) { // 0235
+              str += dg[n[i]] +' ';
+              if ((x-i)%3==0) str += 'hundred ';
+              sk=1;
+          }
+          if ((x-i)%3==1) {
+              if (sk)
+                  str += th[(x-i-1)/3] + ' ';
+              sk=0;
+          }
       }
-  
-      tempNumber = number%(Math.pow(1000,i+1));
-      if (Math.floor(tempNumber/(100*Math.pow(1000,i))) !== 0) word = first[Math.floor(tempNumber/(100*Math.pow(1000,i)))] + 'hunderd ' + word;
-    }
-      return word;
-  }
+      
+      if (x != s.length) {
+          var y = s.length;
+          str += 'point ';
+          for (var i=x+1; i<y; i++)
+              str += dg[n[i]] +' ';
+      }
+      return str.replace(/\s+/g,' ');
+  } 
